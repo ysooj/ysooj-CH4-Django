@@ -13,7 +13,7 @@ def signup_view(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('porducts:product_list')
+            return redirect('products:product_list')
     else:
         form = SignupForm()
 
