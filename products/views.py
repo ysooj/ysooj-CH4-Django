@@ -43,3 +43,14 @@ def product_update_view(request, pk):
         form = ProductForm(instance=product, initial={'hashtags_str': ' '.join(ht.name for ht in product.hashtags.all())})
 
     return render(request, 'products/product_form.html', {'form': form, 'product':product})
+
+@login_required
+def product_delete_view(request, pk):
+    product = get_object_or_404(Product, pk=pk) # 항상 검증 필수! 해당 상품이 db에 있는지!
+    if product.user != request.user:
+        return redirect('products:product_detail', pk=pk)
+    
+    if request.method == 'POST':
+        product.delete()
+        return redirect('products:product_list')
+    return render(request, 'products/product_detail.html', {'product':product})
