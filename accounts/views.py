@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
 from .forms import SignupForm
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
 
 # 회원가입
@@ -16,7 +17,7 @@ def signup_view(request):
 
     return render(request, 'accounts/signup.html', {'form':form})
 
-# 로그아웃
+# 로그인
 def login_view(request):
     # 유저가 인증되었다면 바로 상품 목록 보여줘라.
     if request.user.is_authenticated:
@@ -32,3 +33,9 @@ def login_view(request):
     else:
         form = AuthenticationForm(request)
         return render(request, 'accounts/login.html', {'form': form})
+
+# 로그아웃
+@login_required
+def logout_view(request):
+    logout(request)
+    return redirect('accounts:login')
