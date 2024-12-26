@@ -1,7 +1,7 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import Product
 from .forms import ProductForm
+from .models import Product
 
 # Create your views here.
 def product_list_view(request):
@@ -54,3 +54,14 @@ def product_delete_view(request, pk):
         product.delete()
         return redirect('products:product_list')
     return render(request, 'products/product_detail.html', {'product':product})
+
+@login_required
+def product_like_view(request, pk):
+    product = get_object_or_404(Product, pk=pk) # 항상 검증 필수! 해당 상품이 db에 있는지!
+    # 로그인한 유저와 상품 등록한 유저가 같은 지는 검증할 필요 x.
+    # 로그인한 유저가 찜했는지 안 했는 지를 확인하면 됨
+    if request.user in product.likes.all():
+        product.likes.remove(request.user)
+    else:
+        product.likes.add(request.user)
+    return redirect('products:product_detail', pk=pk)
