@@ -21,3 +21,10 @@ def product_create_view(request):
         form = ProductForm()
 
     return render(request, 'products/product_form.html', {'form' : form})
+
+@login_required
+def product_detail_view(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    product.views += 1
+    product.save()
+    return render(request, 'products/product_detail.html', {'product': product})
